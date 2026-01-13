@@ -32,8 +32,6 @@
       background-image: none !important;
     }
 
-    input { padding: 8px; }
-
     button {
       padding: 8px 14px;
       margin: 5px;
@@ -46,13 +44,13 @@
 </head>
 <body>
 
-<h1>🧧 Guess the CNY Picture 🧧</h1>
+<h1>🧧 CNY Picture Guessing Game 🧧</h1>
 
 <div class="grid" id="grid"></div>
 
+<!-- Only Reveal / Navigation Buttons -->
 <div>
-  <input id="guess" placeholder="Your guess">
-  <button onclick="checkGuess()">Submit</button>
+  <button onclick="revealAll()">Reveal All</button>
 </div>
 
 <div>
@@ -60,21 +58,24 @@
   <button onclick="nextImage()">Next ➡</button>
 </div>
 
-<p id="result"></p>
+<p id="result">Click tiles to reveal the picture!</p>
 
 <script>
+  // Add English and Chinese answers
   const pictures = [
-    { src: "orange.jpg", answer: "orange" },
-    { src: "angbao.jpg", answer: "red packet" }
+    { src: "orange.jpg", answers: ["orange", "橙子"] },
+    { src: "angbao.jpg", answers: ["red packet", "红包"] },
+    { src: "lantern.jpg", answers: ["lantern", "灯笼"] },
+    { src: "lion.jpg", answers: ["lion dance", "舞狮"] }
   ];
 
   let current = 0;
   const grid = document.getElementById("grid");
+  const result = document.getElementById("result");
 
   function loadImage() {
     grid.innerHTML = "";
-    document.getElementById("result").textContent = "";
-    document.getElementById("guess").value = "";
+    result.textContent = "Click tiles to reveal the picture!";
 
     for (let i = 0; i < 16; i++) {
       const tile = document.createElement("div");
@@ -85,27 +86,25 @@
       const y = Math.floor(i / 4) * -80;
       tile.style.backgroundPosition = `${x}px ${y}px`;
 
-      tile.onclick = () => tile.classList.remove("hidden");
+      tile.onclick = () => {
+        tile.classList.remove("hidden");
+        checkCompletion();
+      };
       grid.appendChild(tile);
     }
   }
 
-  function checkGuess() {
-    const guess = document.getElementById("guess").value.toLowerCase();
-    const result = document.getElementById("result");
-
-    if (guess === pictures[current].answer) {
-      result.textContent = "🎉 Correct! 新年快乐!";
-      document.querySelectorAll(".tile")
-        .forEach(t => t.classList.remove("hidden"));
-
-      setTimeout(() => {
-        nextImage();
-      }, 1500);
-    } else {
-      result.textContent = "❌ Wrong! Try again.";
-      document.getElementById("guess").value = ""; // 🔥 Only reset input
+  // Automatically check if all tiles revealed
+  function checkCompletion() {
+    const hiddenTiles = document.querySelectorAll(".tile.hidden");
+    if (hiddenTiles.length === 0) {
+      result.textContent = "🎉 Full picture revealed! 新年快乐!";
     }
+  }
+
+  function revealAll() {
+    document.querySelectorAll(".tile").forEach(t => t.classList.remove("hidden"));
+    result.textContent = "🎉 Full picture revealed! 新年快乐!";
   }
 
   function nextImage() {
