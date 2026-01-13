@@ -55,7 +55,6 @@
   <button onclick="checkGuess()">Submit</button>
 </div>
 
-<!-- NEW: Navigation buttons -->
 <div>
   <button onclick="prevImage()">⬅ Back</button>
   <button onclick="nextImage()">Next ➡</button>
@@ -100,16 +99,15 @@
       document.querySelectorAll(".tile")
         .forEach(t => t.classList.remove("hidden"));
 
-      // auto go next after correct
       setTimeout(() => {
         nextImage();
       }, 1500);
     } else {
-      result.textContent = "❌ Try again!";
+      result.textContent = "❌ Wrong! Try again.";
+      document.getElementById("guess").value = ""; // 🔥 Only reset input
     }
   }
 
-  // NEW FUNCTIONS
   function nextImage() {
     current = (current + 1) % pictures.length;
     loadImage();
