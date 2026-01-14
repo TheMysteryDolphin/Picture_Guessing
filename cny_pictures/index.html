@@ -1,62 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>🧧 CNY Picture Guessing Game</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: #fff3e0;
-      padding: 20px;
-    }
-
-    h1 { color: #c62828; margin-bottom: 10px; }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      width: 480px;
-      height: 480px;
-      margin: 20px auto;
-      gap: 3px;
-    }
-
-    .tile {
-      background-size: 480px 480px;
-      background-color: #c62828;
-      cursor: pointer;
-    }
-
-    .hidden { background-image: none !important; }
-    .revealed { pointer-events: none; }
-
-    button {
-      padding: 8px 14px;
-      margin: 6px;
-      background: #c62828;
-      color: white;
-      border: none;
-      cursor: pointer;
-      border-radius: 4px;
-    }
-
-    button:hover { opacity: 0.9; }
-    button:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    #result { margin-top: 10px; font-weight: bold; color: #c62828; }
-
-    @media (max-width: 600px) {
-      .grid { width: 90vw; height: 90vw; }
-      .tile { background-size: 90vw 90vw; }
-    }
-  </style>
+<meta charset="UTF-8">
+<title>🧧 CNY Picture Guessing Game</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body { font-family: Arial, sans-serif; text-align: center; background: #fff3e0; padding: 20px; }
+  h1 { color: #c62828; margin-bottom: 10px; }
+  .grid { display: grid; grid-template-columns: repeat(6, 1fr); width: 480px; height: 480px; margin: 20px auto; gap: 3px; }
+  .tile { background-size: 480px 480px; background-color: #c62828; cursor: pointer; }
+  .hidden { background-image: none !important; }
+  .revealed { pointer-events: none; }
+  button { padding: 8px 14px; margin: 6px; background: #c62828; color: white; border: none; cursor: pointer; border-radius: 4px; }
+  button:hover { opacity: 0.9; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  #result { margin-top: 10px; font-weight: bold; color: #c62828; }
+  @media (max-width: 600px) { .grid { width: 90vw; height: 90vw; } .tile { background-size: 90vw 90vw; } }
+</style>
 </head>
 <body>
 
 <h1>🧧 Guess the CNY Picture 🧧</h1>
-<p>Click tiles to reveal the picture. 🎁 Last round: find the prizes!</p>
+<p>Click tiles to reveal the picture. 🎁 Last round: find the Yakun voucher prizes!</p>
 
 <div class="grid" id="grid"></div>
 
@@ -72,138 +37,144 @@
 <p id="result"></p>
 
 <script>
-  const pictures = [
-    { src: "orange.jpg", name: "🍊 Orange / 橙子" },
-    { src: "angbao.jpg", name: "🧧 Ang Bao / 红包" },
-    { src: "cny-goodies.jpg", name: "🍪 CNY Goodies / 年饼" },
-    { src: "yusheng.jpg", name: "🥗 Yu Sheng / 鱼生" },
-    { src: "chunlian.jpg", name: "🧾 Chun Lian / 春联" },
-    { src: "traditional-costume.jpg", name: "👘 Traditional Costume / 传统服装" },
-    { src: "reunion-dinner.jpg", name: "🍽️ Reunion Dinner / 团圆饭" },
-    { src: "yakun-voucher.jpg", name: "☕ Ya Kun Voucher / 亚坤礼券" } // prize round
-  ];
+const pictures = [
+  { src: "orange.jpg", name: "🍊 Orange / 橙子" },
+  { src: "angbao.jpg", name: "🧧 Ang Bao / 红包" },
+  { src: "cny-goodies.jpg", name: "🍪 CNY Goodies / 年饼" },
+  { src: "yusheng.jpg", name: "🥗 Yu Sheng / 鱼生" },
+  { src: "chunlian.jpg", name: "🧾 Chun Lian / 春联" },
+  { src: "traditional-costume.jpg", name: "👘 Traditional Costume / 传统服装" },
+  { src: "reunion-dinner.jpg", name: "🍽️ Reunion Dinner / 团圆饭" },
+  { src: "yakun-voucher.jpg", name: "☕ Ya Kun Voucher / 亚坤礼券" } // prize round
+];
 
-  const GRID_SIZE = 6;
-  const TILE_COUNT = GRID_SIZE * GRID_SIZE;
-  const TOTAL_PRIZES = 10;
+const GRID_SIZE = 6;
+const TILE_COUNT = GRID_SIZE * GRID_SIZE;
+const TOTAL_PRIZES = 10;
 
-  const normalMessage = "Click tiles to reveal the picture";
-  const prizeMessage =
-    "🎁 <b>Prize Round!</b> Find the Yakun voucher prizes!<br>" +
-    "🎁 <b>抽奖环节！</b> 找到亚坤礼券奖品!";
+const normalMessage = "Click tiles to reveal the picture";
+const prizeMessage =
+  "🎁 <b>Prize Round!</b> Find the Yakun voucher prizes!<br>" +
+  "🎁 <b>抽奖环节！</b> 找到亚坤礼券奖品!";
 
-  let current = 0;
-  let prizeIndices = [];
-  const grid = document.getElementById("grid");
-  const result = document.getElementById("result");
-  const revealBtn = document.getElementById("revealBtn");
-  const backBtn = document.getElementById("backBtn");
-  const nextBtn = document.getElementById("nextBtn");
+let current = 0;
+let prizeIndices = [];
+const grid = document.getElementById("grid");
+const result = document.getElementById("result");
+const revealBtn = document.getElementById("revealBtn");
+const backBtn = document.getElementById("backBtn");
+const nextBtn = document.getElementById("nextBtn");
 
-  function loadImage() {
-    grid.innerHTML = "";
-    prizeIndices = [];
+function loadImage() {
+  grid.innerHTML = "";
+  prizeIndices = [];
 
-    // Control buttons and messages
-    if (current === 0) {
-      backBtn.disabled = true;
-      backBtn.style.opacity = "0.5";
-    } else if (current === pictures.length - 1) {
-      // Prize round
-      revealBtn.style.display = "none";
-      backBtn.disabled = true;
-      nextBtn.disabled = true;
-      result.innerHTML = prizeMessage;
+  // Control buttons and messages
+  if (current === 0) {
+    backBtn.disabled = true;
+    backBtn.style.opacity = "0.5";
+  } else if (current === pictures.length - 1) {
+    // Prize round
+    revealBtn.style.display = "none";
+    backBtn.disabled = true;
+    nextBtn.disabled = true;
+    result.innerHTML = prizeMessage;
 
-      // Randomly assign prize tiles
-      while (prizeIndices.length < TOTAL_PRIZES) {
-        const idx = Math.floor(Math.random() * TILE_COUNT);
-        if (!prizeIndices.includes(idx)) prizeIndices.push(idx);
-      }
-    } else {
-      revealBtn.style.display = "inline-block";
-      backBtn.disabled = false;
-      nextBtn.disabled = false;
-      backBtn.style.opacity = "1";
-      nextBtn.style.opacity = "1";
-      result.textContent = normalMessage;
+    // Randomly assign prize tiles
+    while (prizeIndices.length < TOTAL_PRIZES) {
+      const idx = Math.floor(Math.random() * TILE_COUNT);
+      if (!prizeIndices.includes(idx)) prizeIndices.push(idx);
     }
-
-    const gridSizePx = grid.offsetWidth;
-    const tileSize = gridSizePx / GRID_SIZE;
-
-    for (let i = 0; i < TILE_COUNT; i++) {
-      const tile = document.createElement("div");
-      tile.className = "tile hidden";
-
-      if (current === pictures.length - 1) {
-        tile.style.backgroundImage = "none"; // initially blank for prize round
-      } else {
-        tile.style.backgroundImage = `url(${pictures[current].src})`;
-        const x = (i % GRID_SIZE) * -tileSize;
-        const y = Math.floor(i / GRID_SIZE) * -tileSize;
-        tile.style.backgroundPosition = `${x}px ${y}px`;
-      }
-
-      tile.onclick = () => handleTileClick(tile, i);
-      grid.appendChild(tile);
-    }
+  } else {
+    revealBtn.style.display = "inline-block";
+    backBtn.disabled = false;
+    nextBtn.disabled = false;
+    backBtn.style.opacity = "1";
+    nextBtn.style.opacity = "1";
+    result.textContent = normalMessage;
   }
 
-  function handleTileClick(tile, index) {
+  const gridSizePx = grid.offsetWidth;
+  const tileSize = gridSizePx / GRID_SIZE;
+
+  for (let i = 0; i < TILE_COUNT; i++) {
+    const tile = document.createElement("div");
+    tile.className = "tile hidden";
+
     if (current === pictures.length - 1) {
-      if (tile.classList.contains("revealed")) return;
-      tile.classList.add("revealed");
-
-      if (prizeIndices.includes(index)) {
-        tile.style.backgroundImage = "url(yakun-voucher.jpg)";
-        tile.style.backgroundSize = "cover";
-        tile.style.backgroundPosition = "center";
-        result.innerHTML =
-          `🎉 <b>恭喜你！You won a prize!</b> 🧧<br>` +
-          `请向工作人员领取你的奖品`;
-      } else {
-        tile.style.backgroundImage = "none";
-        tile.style.backgroundColor = "#ffffff";
-        result.innerHTML = `😅 不是奖品，再试试! / Not a prize, try again!`;
-      }
-      return;
-    }
-
-    // Normal picture behavior
-    tile.classList.remove("hidden");
-    checkComplete();
-  }
-
-  function checkComplete() {
-    const hiddenTiles = document.querySelectorAll(".tile.hidden");
-    if (hiddenTiles.length === 0) {
-      result.textContent = `🎉 ${pictures[current].name} `;
-    }
-  }
-
-  function revealAll() {
-    document.querySelectorAll(".tile").forEach(t => t.classList.remove("hidden"));
-    if (current === pictures.length - 1) {
-      result.innerHTML = prizeMessage;
+      tile.style.backgroundImage = "none"; // initially hidden for prize round
     } else {
-      result.textContent = `🎉 ${pictures[current].name} `;
+      tile.style.backgroundImage = `url(${pictures[current].src})`;
+      const x = (i % GRID_SIZE) * -tileSize;
+      const y = Math.floor(i / GRID_SIZE) * -tileSize;
+      tile.style.backgroundPosition = `${x}px ${y}px`;
     }
+
+    tile.onclick = () => handleTileClick(tile, i);
+    grid.appendChild(tile);
+  }
+}
+
+function handleTileClick(tile, index) {
+  // Prize round
+  if (current === pictures.length - 1) {
+    if (tile.classList.contains("revealed")) return;
+    tile.classList.add("revealed");
+
+    const prizeSrc = pictures[pictures.length - 1].src; // last picture src
+
+    if (prizeIndices.includes(index)) {
+      tile.style.backgroundImage = `url(${prizeSrc})`;
+      tile.style.backgroundSize = "cover";
+      tile.style.backgroundPosition = "center";
+      result.innerHTML =
+        `🎉 <b>恭喜你！You won a prize!</b> 🧧<br>` +
+        `请向工作人员领取你的奖品`;
+    } else {
+      tile.style.backgroundImage = "none";
+      tile.style.backgroundColor = "#ffffff";
+      result.innerHTML = `😅 不是奖品，再试试! / Not a prize, try again!`;
+    }
+    return;
   }
 
-  function nextImage() {
-    current = (current + 1) % pictures.length;
+  // Normal picture behavior
+  tile.classList.remove("hidden");
+  checkComplete();
+}
+
+function checkComplete() {
+  const hiddenTiles = document.querySelectorAll(".tile.hidden");
+  if (hiddenTiles.length === 0) {
+    result.textContent = `🎉 ${pictures[current].name} 新年快乐!`;
+  }
+}
+
+function revealAll() {
+  document.querySelectorAll(".tile").forEach(t => t.classList.remove("hidden"));
+  if (current === pictures.length - 1) {
+    result.innerHTML = prizeMessage;
+  } else {
+    result.textContent = `🎉 ${pictures[current].name} 新年快乐!`;
+  }
+}
+
+function nextImage() {
+  if (current < pictures.length - 1) {
+    current++;
     loadImage();
   }
+}
 
-  function prevImage() {
-    current = (current - 1 + pictures.length) % pictures.length;
+function prevImage() {
+  if (current > 0) {
+    current--;
     loadImage();
   }
+}
 
-  window.addEventListener("resize", loadImage);
-  loadImage();
+window.addEventListener("resize", loadImage);
+loadImage();
 </script>
-
 </body>
 </html>
