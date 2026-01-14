@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>CNY Picture Guessing Game</title>
+  <title>🧧 CNY Picture Guessing Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -11,19 +13,22 @@
       padding: 20px;
     }
 
-    h1 { color: #c62828; }
+    h1 {
+      color: #c62828;
+      margin-bottom: 10px;
+    }
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      width: 320px;
-      height: 320px;
+      grid-template-columns: repeat(6, 1fr);
+      width: 480px;
+      height: 480px;
       margin: 20px auto;
       gap: 3px;
     }
 
     .tile {
-      background-size: 320px 320px;
+      background-size: 480px 480px;
       background-color: #c62828;
       cursor: pointer;
     }
@@ -34,21 +39,44 @@
 
     button {
       padding: 8px 14px;
-      margin: 5px;
+      margin: 6px;
       background: #c62828;
       color: white;
       border: none;
       cursor: pointer;
+      border-radius: 4px;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    #result {
+      margin-top: 10px;
+      font-weight: bold;
+      color: #c62828;
+    }
+
+    /* 📱 Mobile responsive */
+    @media (max-width: 600px) {
+      .grid {
+        width: 90vw;
+        height: 90vw;
+      }
+
+      .tile {
+        background-size: 90vw 90vw;
+      }
     }
   </style>
 </head>
 <body>
 
-<h1>🧧 CNY Picture Guessing Game 🧧</h1>
+<h1>🧧 Guess the CNY Picture 🧧</h1>
+<p>Click the tiles to reveal the picture</p>
 
 <div class="grid" id="grid"></div>
 
-<!-- Only Reveal / Navigation Buttons -->
 <div>
   <button onclick="revealAll()">Reveal All</button>
 </div>
@@ -58,16 +86,18 @@
   <button onclick="nextImage()">Next ➡</button>
 </div>
 
-<p id="result">Click tiles to reveal the picture!</p>
+<p id="result"></p>
 
 <script>
-  // Add English and Chinese answers
   const pictures = [
-    { src: "orange.jpg", answers: ["orange", "橙子"] },
-    { src: "angbao.jpg", answers: ["red packet", "红包"] },
-    { src: "lantern.jpg", answers: ["lantern", "灯笼"] },
-    { src: "lion.jpg", answers: ["lion dance", "舞狮"] }
+    { src: "orange.jpg", name: "🍊 Orange / 橙子" },
+    { src: "angbao.jpg", name: "🧧 Red Packet / 红包" },
+    { src: "lantern.jpg", name: "🏮 Lantern / 灯笼" },
+    { src: "lion.jpg", name: "🦁 Lion Dance / 舞狮" }
   ];
+
+  const GRID_SIZE = 6;
+  const TILE_COUNT = GRID_SIZE * GRID_SIZE;
 
   let current = 0;
   const grid = document.getElementById("grid");
@@ -75,36 +105,40 @@
 
   function loadImage() {
     grid.innerHTML = "";
-    result.textContent = "Click tiles to reveal the picture!";
+    result.textContent = "";
 
-    for (let i = 0; i < 16; i++) {
+    const gridSizePx = grid.offsetWidth;
+    const tileSize = gridSizePx / GRID_SIZE;
+
+    for (let i = 0; i < TILE_COUNT; i++) {
       const tile = document.createElement("div");
       tile.className = "tile hidden";
       tile.style.backgroundImage = `url(${pictures[current].src})`;
 
-      const x = (i % 4) * -80;
-      const y = Math.floor(i / 4) * -80;
+      const x = (i % GRID_SIZE) * -tileSize;
+      const y = Math.floor(i / GRID_SIZE) * -tileSize;
       tile.style.backgroundPosition = `${x}px ${y}px`;
 
       tile.onclick = () => {
         tile.classList.remove("hidden");
-        checkCompletion();
+        checkComplete();
       };
+
       grid.appendChild(tile);
     }
   }
 
-  // Automatically check if all tiles revealed
-  function checkCompletion() {
+  function checkComplete() {
     const hiddenTiles = document.querySelectorAll(".tile.hidden");
     if (hiddenTiles.length === 0) {
-      result.textContent = "🎉 Full picture revealed! 新年快乐!";
+      result.textContent = `🎉 ${pictures[current].name} 新年快乐!`;
     }
   }
 
   function revealAll() {
-    document.querySelectorAll(".tile").forEach(t => t.classList.remove("hidden"));
-    result.textContent = "🎉 Full picture revealed! 新年快乐!";
+    document.querySelectorAll(".tile")
+      .forEach(t => t.classList.remove("hidden"));
+    result.textContent = `🎉 ${pictures[current].name} 新年快乐!`;
   }
 
   function nextImage() {
@@ -117,6 +151,7 @@
     loadImage();
   }
 
+  window.addEventListener("resize", loadImage);
   loadImage();
 </script>
 
