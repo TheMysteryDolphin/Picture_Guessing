@@ -30,6 +30,7 @@
     }
 
     .hidden { background-image: none !important; }
+    .revealed { pointer-events: none; }
 
     button {
       padding: 8px 14px;
@@ -42,7 +43,6 @@
     }
 
     button:hover { opacity: 0.9; }
-
     button:disabled { opacity: 0.5; cursor: not-allowed; }
 
     #result { margin-top: 10px; font-weight: bold; color: #c62828; }
@@ -56,7 +56,7 @@
 <body>
 
 <h1>🧧 Guess the CNY Picture 🧧</h1>
-<p>Click tiles to reveal the picture. 🎁 Last round: first click wins a prize!</p>
+<p>Click tiles to reveal the picture. 🎁 Last round: find the prizes!</p>
 
 <div class="grid" id="grid"></div>
 
@@ -80,20 +80,20 @@
     { src: "chunlian.jpg", name: "🧾 Chun Lian / 春联" },
     { src: "traditional-costume.jpg", name: "👘 Traditional Costume / 传统服装" },
     { src: "reunion-dinner.jpg", name: "🍽️ Reunion Dinner / 团圆饭" },
-    { src: "yakun-voucher.jpg", name: "☕ Ya Kun Voucher / 亚坤礼券" }
+    { src: "yakun-voucher.jpg", name: "☕ Ya Kun Voucher / 亚坤礼券" } // last picture
   ];
 
   const GRID_SIZE = 6;
   const TILE_COUNT = GRID_SIZE * GRID_SIZE;
+  const TOTAL_PRIZES = 10;
 
   const normalMessage = "Click tiles to reveal the picture";
   const prizeMessage =
-    "🎁 <b>Prize Round!</b> First person to open a box wins a prize!<br>" +
-    "🎁 <b>抽奖环节！</b> 第一个打开格子的人即可获得奖品！";
+    "🎁 <b>Prize Round!</b> Find the prizes!<br>" +
+    "🎁 <b>抽奖环节！</b> 找到亚坤礼券奖品!";
 
   let current = 0;
-  let prizeClaimed = false;
-
+  let prizeIndices = [];
   const grid = document.getElementById("grid");
   const result = document.getElementById("result");
   const revealBtn = document.getElementById("revealBtn");
@@ -102,14 +102,20 @@
 
   function loadImage() {
     grid.innerHTML = "";
-    prizeClaimed = false;
+    prizeIndices = [];
 
-    // Prize round special controls
     if (current === pictures.length - 1) {
+      // Last picture = prize round
       revealBtn.style.display = "none";
       backBtn.disabled = true;
       nextBtn.disabled = true;
       result.innerHTML = prizeMessage;
+
+      // randomly assign 10 prize tiles
+      while (prizeIndices.length < TOTAL_PRIZES) {
+        const idx = Math.floor(Math.random() * TILE_COUNT);
+        if (!prizeIndices.includes(idx)) prizeIndices.push(idx);
+      }
     } else {
       revealBtn.style.display = "inline-block";
       backBtn.disabled = false;
@@ -123,31 +129,33 @@
     for (let i = 0; i < TILE_COUNT; i++) {
       const tile = document.createElement("div");
       tile.className = "tile hidden";
-      tile.style.backgroundImage = `url(${pictures[current].src})`;
+      // Use Yakun voucher for last picture, else normal
+      const imgSrc = current === pictures.length - 1 ? "yakun-voucher.jpg" : pictures[current].src;
+      tile.style.backgroundImage = `url(${imgSrc})`;
 
       const x = (i % GRID_SIZE) * -tileSize;
       const y = Math.floor(i / GRID_SIZE) * -tileSize;
       tile.style.backgroundPosition = `${x}px ${y}px`;
 
-      tile.onclick = () => handleTileClick(tile);
+      tile.onclick = () => handleTileClick(tile, i);
       grid.appendChild(tile);
     }
   }
 
-  function handleTileClick(tile) {
+  function handleTileClick(tile, index) {
     // Last picture = prize round
     if (current === pictures.length - 1) {
-      if (prizeClaimed) return;
-
-      prizeClaimed = true;
+      if (tile.classList.contains("revealed")) return; // already clicked
+      tile.classList.add("revealed");
       tile.classList.remove("hidden");
 
-      document.querySelectorAll(".tile")
-        .forEach(t => t.classList.remove("hidden"));
-
-      result.innerHTML =
-        "🎉 <b>恭喜你！You won a prize!</b> 🧧<br>" +
-        "请向工作人员领取你的奖品";
+      if (prizeIndices.includes(index)) {
+        result.innerHTML =
+          `🎉 <b>恭喜你！You won a prize!</b> 🧧<br>` +
+          `请向工作人员领取你的奖品`;
+      } else {
+        result.innerHTML = `😅 不是奖品，再试试! / Not a prize, try again!`;
+      }
       return;
     }
 
@@ -159,7 +167,7 @@
   function checkComplete() {
     const hiddenTiles = document.querySelectorAll(".tile.hidden");
     if (hiddenTiles.length === 0) {
-      result.textContent = `🎉 ${pictures[current].name} 新年快乐!`;
+      result.textContent = `🎉 ${pictures[current].name} `;
     }
   }
 
@@ -170,7 +178,7 @@
     if (current === pictures.length - 1) {
       result.innerHTML = prizeMessage;
     } else {
-      result.textContent = `🎉 ${pictures[current].name} 新年快乐!`;
+      result.textContent = `🎉 ${pictures[current].name} `;
     }
   }
 
@@ -187,6 +195,3 @@
   window.addEventListener("resize", loadImage);
   loadImage();
 </script>
-
-</body>
-</html>
