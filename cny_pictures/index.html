@@ -122,16 +122,14 @@ function handleTileClick(tile, index) {
     if (tile.classList.contains("revealed")) return;
     tile.classList.add("revealed");
 
-    // Always use Yakun voucher image for prizes
-    const prizeImage = "yakun-voucher.jpg";
-
-    tile.style.backgroundSize = "cover";
-    tile.style.backgroundPosition = "center";
-    tile.style.backgroundColor = "#ffffff"; // remove red box
+    const prizeImage = "yakun-voucher.jpg"; // always use this image
 
     if (prizeIndices.includes(index)) {
-      // Winning tile → show the Yakun voucher
+      // Winning tile → show voucher
       tile.style.backgroundImage = `url(${prizeImage})`;
+      tile.style.backgroundSize = "cover";
+      tile.style.backgroundPosition = "center";
+      tile.style.backgroundColor = ""; // remove any red
       result.innerHTML =
         `🎉 <b>恭喜你！You won a prize!</b> 🧧<br>` +
         `请向工作人员领取你的奖品`;
@@ -141,13 +139,15 @@ function handleTileClick(tile, index) {
       tile.style.backgroundColor = "#ffffff";
       result.innerHTML = `😅 不是奖品，再试试! / Not a prize, try again!`;
     }
-    return;
+
+    return; // stop here for prize round
   }
 
   // Normal picture behavior
   tile.classList.remove("hidden");
   checkComplete();
 }
+
 
 function checkComplete() {
   const hiddenTiles = document.querySelectorAll(".tile.hidden");
