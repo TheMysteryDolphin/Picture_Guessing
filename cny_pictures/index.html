@@ -90,11 +90,15 @@
 
 <script>
   const pictures = [
-    { src: "orange.jpg", name: "🍊 Orange / 橙子" },
-    { src: "angbao.jpg", name: "🧧 Red Packet / 红包" },
-    { src: "lantern.jpg", name: "🏮 Lantern / 灯笼" },
-    { src: "lion.jpg", name: "🦁 Lion Dance / 舞狮" }
-  ];
+  { src: "orange.jpg", name: "🍊 Orange / 橙子" },
+  { src: "angbao.jpg", name: "🧧 Ang Bao / 红包" },
+  { src: "cny-goodies.jpg", name: "🍪 CNY Goodies / 年饼" },
+  { src: "yusheng.jpg", name: "🥗 Yu Sheng / 鱼生" },
+  { src: "chunlian.jpg", name: "🧾 Chun Lian / 春联" },
+  { src: "traditional-costume.jpg", name: "👘 Traditional Costume / 传统服装" },
+  { src: "reunion-dinner.jpg", name: "🍽️ Reunion Dinner / 团圆饭" },
+  { src: "yakun-voucher.jpg", name: "☕ Ya Kun Voucher / 亚坤礼券" }
+];
 
   const GRID_SIZE = 6;
   const TILE_COUNT = GRID_SIZE * GRID_SIZE;
@@ -131,14 +135,14 @@
   function checkComplete() {
     const hiddenTiles = document.querySelectorAll(".tile.hidden");
     if (hiddenTiles.length === 0) {
-      result.textContent = `🎉 ${pictures[current].name} 新年快乐!`;
+      result.textContent = `🎉 ${pictures[current].name} `;
     }
   }
 
   function revealAll() {
     document.querySelectorAll(".tile")
       .forEach(t => t.classList.remove("hidden"));
-    result.textContent = `🎉 ${pictures[current].name} 新年快乐!`;
+    result.textContent = `🎉 ${pictures[current].name} `;
   }
 
   function nextImage() {
