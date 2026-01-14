@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>🧧 CNY Picture Guessing Game</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -13,10 +12,7 @@
       padding: 20px;
     }
 
-    h1 {
-      color: #c62828;
-      margin-bottom: 10px;
-    }
+    h1 { color: #c62828; margin-bottom: 10px; }
 
     .grid {
       display: grid;
@@ -33,9 +29,7 @@
       cursor: pointer;
     }
 
-    .hidden {
-      background-image: none !important;
-    }
+    .hidden { background-image: none !important; }
 
     button {
       padding: 8px 14px;
@@ -47,69 +41,81 @@
       border-radius: 4px;
     }
 
-    button:hover {
-      opacity: 0.9;
-    }
+    button:hover { opacity: 0.9; }
 
-    #result {
-      margin-top: 10px;
-      font-weight: bold;
-      color: #c62828;
-    }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* 📱 Mobile responsive */
+    #result { margin-top: 10px; font-weight: bold; color: #c62828; }
+
     @media (max-width: 600px) {
-      .grid {
-        width: 90vw;
-        height: 90vw;
-      }
-
-      .tile {
-        background-size: 90vw 90vw;
-      }
+      .grid { width: 90vw; height: 90vw; }
+      .tile { background-size: 90vw 90vw; }
     }
   </style>
 </head>
 <body>
 
 <h1>🧧 Guess the CNY Picture 🧧</h1>
-<p>Click the tiles to reveal the picture</p>
+<p>Click tiles to reveal the picture. 🎁 Last round: first click wins a prize!</p>
 
 <div class="grid" id="grid"></div>
 
 <div>
-  <button onclick="revealAll()">Reveal All</button>
+  <button id="revealBtn" onclick="revealAll()">Reveal All</button>
 </div>
 
 <div>
-  <button onclick="prevImage()">⬅ Back</button>
-  <button onclick="nextImage()">Next ➡</button>
+  <button id="backBtn" onclick="prevImage()">⬅ Back</button>
+  <button id="nextBtn" onclick="nextImage()">Next ➡</button>
 </div>
 
 <p id="result"></p>
 
 <script>
   const pictures = [
-  { src: "orange.jpg", name: "🍊 Orange / 橙子" },
-  { src: "angbao.jpg", name: "🧧 Ang Bao / 红包" },
-  { src: "cny-goodies.jpg", name: "🍪 CNY Goodies / 年饼" },
-  { src: "yusheng.jpg", name: "🥗 Yu Sheng / 鱼生" },
-  { src: "chunlian.jpg", name: "🧾 Chun Lian / 春联" },
-  { src: "traditional-costume.jpg", name: "👘 Traditional Costume / 传统服装" },
-  { src: "reunion-dinner.jpg", name: "🍽️ Reunion Dinner / 团圆饭" },
-  { src: "yakun-voucher.jpg", name: "☕ Ya Kun Voucher / 亚坤礼券" }
-];
+    { src: "orange.jpg", name: "🍊 Orange / 橙子" },
+    { src: "angbao.jpg", name: "🧧 Ang Bao / 红包" },
+    { src: "cny-goodies.jpg", name: "🍪 CNY Goodies / 年饼" },
+    { src: "yusheng.jpg", name: "🥗 Yu Sheng / 鱼生" },
+    { src: "chunlian.jpg", name: "🧾 Chun Lian / 春联" },
+    { src: "traditional-costume.jpg", name: "👘 Traditional Costume / 传统服装" },
+    { src: "reunion-dinner.jpg", name: "🍽️ Reunion Dinner / 团圆饭" },
+    { src: "yakun-voucher.jpg", name: "☕ Ya Kun Voucher / 亚坤礼券" }
+  ];
 
   const GRID_SIZE = 6;
   const TILE_COUNT = GRID_SIZE * GRID_SIZE;
 
+  const normalMessage = "Click tiles to reveal the picture";
+  const prizeMessage =
+    "🎁 <b>Prize Round!</b> First person to open a box wins a prize!<br>" +
+    "🎁 <b>抽奖环节！</b> 第一个打开格子的人即可获得奖品！";
+
   let current = 0;
+  let prizeClaimed = false;
+
   const grid = document.getElementById("grid");
   const result = document.getElementById("result");
+  const revealBtn = document.getElementById("revealBtn");
+  const backBtn = document.getElementById("backBtn");
+  const nextBtn = document.getElementById("nextBtn");
 
   function loadImage() {
     grid.innerHTML = "";
-    result.textContent = "";
+    prizeClaimed = false;
+
+    // Prize round special controls
+    if (current === pictures.length - 1) {
+      revealBtn.style.display = "none";
+      backBtn.disabled = true;
+      nextBtn.disabled = true;
+      result.innerHTML = prizeMessage;
+    } else {
+      revealBtn.style.display = "inline-block";
+      backBtn.disabled = false;
+      nextBtn.disabled = false;
+      result.textContent = normalMessage;
+    }
 
     const gridSizePx = grid.offsetWidth;
     const tileSize = gridSizePx / GRID_SIZE;
@@ -123,26 +129,49 @@
       const y = Math.floor(i / GRID_SIZE) * -tileSize;
       tile.style.backgroundPosition = `${x}px ${y}px`;
 
-      tile.onclick = () => {
-        tile.classList.remove("hidden");
-        checkComplete();
-      };
-
+      tile.onclick = () => handleTileClick(tile);
       grid.appendChild(tile);
     }
+  }
+
+  function handleTileClick(tile) {
+    // Last picture = prize round
+    if (current === pictures.length - 1) {
+      if (prizeClaimed) return;
+
+      prizeClaimed = true;
+      tile.classList.remove("hidden");
+
+      document.querySelectorAll(".tile")
+        .forEach(t => t.classList.remove("hidden"));
+
+      result.innerHTML =
+        "🎉 <b>恭喜你！You won a prize!</b> 🧧<br>" +
+        "请向工作人员领取你的奖品";
+      return;
+    }
+
+    // Normal picture behavior
+    tile.classList.remove("hidden");
+    checkComplete();
   }
 
   function checkComplete() {
     const hiddenTiles = document.querySelectorAll(".tile.hidden");
     if (hiddenTiles.length === 0) {
-      result.textContent = `🎉 ${pictures[current].name} `;
+      result.textContent = `🎉 ${pictures[current].name} 新年快乐!`;
     }
   }
 
   function revealAll() {
     document.querySelectorAll(".tile")
       .forEach(t => t.classList.remove("hidden"));
-    result.textContent = `🎉 ${pictures[current].name} `;
+
+    if (current === pictures.length - 1) {
+      result.innerHTML = prizeMessage;
+    } else {
+      result.textContent = `🎉 ${pictures[current].name} 新年快乐!`;
+    }
   }
 
   function nextImage() {
