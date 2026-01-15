@@ -121,12 +121,17 @@ function handleTileClick(tile, index) {
     if (tile.classList.contains("revealed")) return;
     tile.classList.add("revealed");
 
-    const prizeSrc = pictures[pictures.length - 1].src; // last picture src
+    const prizeSrc = pictures[pictures.length - 1].src;
+
+    // 🔴 IMPORTANT: remove red background
+    tile.style.backgroundColor = "transparent";
 
     if (prizeIndices.includes(index)) {
       tile.style.backgroundImage = `url(${prizeSrc})`;
       tile.style.backgroundSize = "cover";
       tile.style.backgroundPosition = "center";
+      tile.style.backgroundRepeat = "no-repeat";
+
       result.innerHTML =
         `🎉 <b>恭喜你！You won a prize!</b> 🧧<br>` +
         `请领取你的奖品`;
