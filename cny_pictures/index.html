@@ -119,33 +119,30 @@ function handleTileClick(tile, index) {
   // Prize round
   if (current === pictures.length - 1) {
     if (tile.classList.contains("revealed")) return;
+
     tile.classList.add("revealed");
+    tile.classList.remove("hidden"); // 🔑 IMPORTANT
 
-    const prizeSrc = pictures[pictures.length - 1].src;
+    const prizeSrc = pictures[current].src; // yakun-voucher.jpg
 
-    // 🔑 Remove red background
-    
-    tile.style.backgroundSize = "cover";
-    tile.style.backgroundPosition = "center";
-    tile.style.backgroundRepeat = "no-repeat";
+    // Clear red box
+    tile.style.backgroundColor = "transparent";
+    tile.style.backgroundImage = "none";
 
     if (prizeIndices.includes(index)) {
-      tile.style.backgroundImage = "none";
-      tile.style.backgroundColor = "#ffffff";
-      tile.style.display = "flex";
-      tile.style.alignItems = "center";
-      tile.style.justifyContent = "center";
-      tile.style.fontSize = "48px";
-      tile.classList.remove("hidden");
-      tile.textContent = "✅";
-    
+      tile.style.backgroundImage = `url(${prizeSrc})`;
+      tile.style.backgroundSize = "cover";
+      tile.style.backgroundPosition = "center";
+      tile.style.backgroundRepeat = "no-repeat";
+
       result.innerHTML =
         `🎉 <b>恭喜你！You won a prize!</b> 🧧<br>` +
-        `请领取你的奖品`;
+        `请向工作人员领取亚坤礼券`;
     } else {
       tile.style.backgroundImage = "none";
       tile.style.backgroundColor = "#ffffff";
-      result.innerHTML = `😅 不是奖品，再试试! / Not a prize, try again!`;
+      result.innerHTML =
+        `😅 不是奖品，再试试! / Not a prize, try again!`;
     }
     return;
   }
@@ -154,6 +151,7 @@ function handleTileClick(tile, index) {
   tile.classList.remove("hidden");
   checkComplete();
 }
+
   
 function checkComplete() {
   const hiddenTiles = document.querySelectorAll(".tile.hidden");
