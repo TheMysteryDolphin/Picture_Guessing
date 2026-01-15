@@ -130,8 +130,14 @@ function handleTileClick(tile, index) {
     tile.style.backgroundRepeat = "no-repeat";
 
     if (prizeIndices.includes(index)) {
-      tile.style.backgroundColor = "transparent";
-      tile.style.backgroundImage = `url(${pictures[current].src})`;
+      tile.style.backgroundImage = "none";
+      tile.style.backgroundColor = "#ffffff";
+      tile.style.display = "flex";
+      tile.style.alignItems = "center";
+      tile.style.justifyContent = "center";
+      tile.style.fontSize = "48px";
+      tile.textContent = "✅";
+    
       result.innerHTML =
         `🎉 <b>恭喜你！You won a prize!</b> 🧧<br>` +
         `请领取你的奖品`;
