@@ -8,7 +8,7 @@
   body { font-family: Arial, sans-serif; text-align: center; background: #fff3e0; padding: 20px; }
   h1 { color: #c62828; margin-bottom: 10px; }
   .grid { display: grid; grid-template-columns: repeat(6, 1fr); width: 480px; height: 480px; margin: 20px auto; gap: 3px; }
-  .tile { background-color: #c62828; cursor: pointer; }
+  .tile { background-size: 480px 480px; background-color: #c62828; cursor: pointer; }
   .hidden { background-image: none !important; }
   .revealed { pointer-events: none; }
   button { padding: 8px 14px; margin: 6px; background: #c62828; color: white; border: none; cursor: pointer; border-radius: 4px; }
@@ -105,7 +105,6 @@ function loadImage() {
       tile.style.backgroundImage = "none"; // initially hidden for prize round
     } else {
       tile.style.backgroundImage = `url(${pictures[current].src})`;
-      tile.style.backgroundSize = `${gridSizePx}px ${gridSizePx}px`;
       const x = (i % GRID_SIZE) * -tileSize;
       const y = Math.floor(i / GRID_SIZE) * -tileSize;
       tile.style.backgroundPosition = `${x}px ${y}px`;
@@ -125,16 +124,13 @@ function handleTileClick(tile, index) {
     const prizeSrc = pictures[pictures.length - 1].src; // last picture src
 
     if (prizeIndices.includes(index)) {
-      // Prize tile shows full Yakun voucher
       tile.style.backgroundImage = `url(${prizeSrc})`;
       tile.style.backgroundSize = "cover";
       tile.style.backgroundPosition = "center";
-      tile.style.backgroundColor = ""; // remove red
       result.innerHTML =
         `🎉 <b>恭喜你！You won a prize!</b> 🧧<br>` +
-        `请向工作人员领取你的奖品`;
+        `请领取你的奖品`;
     } else {
-      // Non-prize tile → white
       tile.style.backgroundImage = "none";
       tile.style.backgroundColor = "#ffffff";
       result.innerHTML = `😅 不是奖品，再试试! / Not a prize, try again!`;
@@ -180,6 +176,5 @@ function prevImage() {
 window.addEventListener("resize", loadImage);
 loadImage();
 </script>
-
 </body>
 </html>
