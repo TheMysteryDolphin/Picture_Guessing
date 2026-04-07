@@ -1,1 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>🧧 CNY Picture Guessing Game</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body { font-family: Arial, sans-serif; text-align: center; background: #fff3e0; padding: 20px; }
+  h1 { color: #c62828; margin-bottom: 10px; }
+  .grid { display: grid; grid-template-columns: repeat(6, 1fr); width: 480px; height: 480px; margin: 20px auto; gap: 3px; }
+  .tile { background-size: 480px 480px; background-color: #c62828; cursor: pointer; }
+  .hidden { background-image: none !important; }
+  .revealed { pointer-events: none; }
+  button { padding: 8px 14px; margin: 6px; background: #c62828; color: white; border: none; cursor: pointer; border-radius: 4px; }
+  button:hover { opacity: 0.9; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  #result { margin-top: 10px; font-weight: bold; color: #c62828; }
+  @media (max-width: 600px) { .grid { width: 90vw; height: 90vw; } .tile { background-size: 90vw 90vw; } }
+</style>
+</head>
+<body>
 
+<h1>🧧 Guess the CNY Picture 🧧</h1>
+<p>Click tiles to reveal the picture.</p>
+
+<div class="grid" id="grid"></div>
+
+<div>
+  <button id="revealBtn" onclick="revealAll()">Reveal All</button>
+</div>
+
+<div>
+  <button id="backBtn" onclick="prevImage()">⬅ Back</button>
+  <button id="nextBtn" onclick="nextImage()">Next ➡</button>
+</div>
+
+<p id="result"></p>
+
+<script>
+const pictures = [
+  { src: "orange.jpg", name: "🍊 Orange / 橙子" },
+  { src: "angbao.jpg", name: "🧧 Ang Bao / 红包" },
+  { src: "cny-goodies.jpg", name: "🍪 CNY Goodies / 年饼" },
+  { src: "yusheng.jpg", name: "🥗 Yu Sheng / 鱼生" },
+  { src: "chunlian.jpg", name: "🧾 Chun Lian / 春联" },
+  { src: "traditional-costume.jpg", name: "👘 Traditional Costume / 传统服装" },
+  { src: "reunion-dinner.jpg", name: "🍽️ Reunion Dinner / 团圆饭" }
+  // last game / prize removed
+];
+
+const GRID_SIZE = 6;
+const TILE_COUNT = GRID_SIZE * GRID_SIZE;
+
+const normalMessage = "Click tiles to reveal the picture";
+
+let current = 0;
+const grid = document.getElementById("grid");
+const result = document.getElementById("result");
+const revealBtn = document.getElementById("revealBtn");
+const backBtn = document.getElementById("backBtn");
+const nextBtn = document.getElementById("nextBtn");
+
+function loadImage() {
+  grid.innerHTML = "";
+
+  // Control buttons and messages
+  backBtn.disabled = current === 0;
+  nextBtn.disabled = current === pictures.length - 1;
+  backBtn.style.opacity = backBtn.disabled ? "0.5" : "1";
+  nextBtn.style.opacity = nextBtn.disabled ? "0.5" : "1";
+  revealBtn.style.display = "inline-block";
+  result.textContent = normalMessage;
+
+  const gridSizePx = grid.offsetWidth;
+  const tileSize = gridSizePx / GRID_SIZE;
+
+  for (let i = 0; i < TILE_COUNT; i++) {
+    const tile = document.createElement("div");
+    tile.className = "tile hidden";
+    tile.style.backgroundImage = `url(${pictures[current].src})`;
+    const x = (i % GRID_SIZE) * -tileSize;
+    const y = Math.floor(i / GRID_SIZE) * -tileSize;
+    tile.style.backgroundPosition = `${x}px ${y}px`;
+
+    tile.onclick = () => handleTileClick(tile);
+    grid.appendChild(tile);
+  }
+}
+
+function handleTileClick(tile) {
+  tile.classList.remove("hidden");
+  checkComplete();
+}
+
+function checkComplete() {
+  const hiddenTiles = document.querySelectorAll(".tile.hidden");
+  if (hiddenTiles.length === 0) {
+    result.textContent = `🎉 ${pictures[current].name}`;
+  }
+}
+
+function revealAll() {
+  document.querySelectorAll(".tile").forEach(t => t.classList.remove("hidden"));
+  result.textContent = `🎉 ${pictures[current].name}`;
+}
+
+function nextImage() {
+  if (current < pictures.length - 1) {
+    current++;
+    loadImage();
+  }
+}
+
+function prevImage() {
+  if (current > 0) {
+    current--;
+    loadImage();
+  }
+}
+
+window.addEventListener("resize", loadImage);
+loadImage();
+</script>
+</body>
+</html>
