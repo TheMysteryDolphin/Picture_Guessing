@@ -3,16 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Picture Quiz Sample</title>
+  <title>4x4 Picture Quiz Game</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      margin-top: 50px;
+      margin: 20px;
     }
-    img {
-      max-width: 400px;
+    h1, h2 {
+      margin: 10px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      justify-items: center;
       margin-top: 20px;
+    }
+    .grid img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
       border: 2px solid #333;
       border-radius: 8px;
     }
@@ -22,50 +33,83 @@
       font-size: 18px;
       cursor: pointer;
     }
-    h2 {
+    #summary {
+      display: none;
       margin-top: 20px;
     }
   </style>
 </head>
 <body>
 
-  <h1>Picture Quiz Sample</h1>
-  <h2 id="question"></h2>
-  <img id="quizImage" src="" alt="quiz">
+  <h1>4x4 Picture Quiz</h1>
+  <h2 id="question">Click "Next Picture" to start!</h2>
+  <img id="quizImage" src="" alt="quiz" style="max-width:400px; margin-top:20px;">
 
   <div>
     <button onclick="nextPicture()">Next Picture</button>
   </div>
 
+  <div id="summary">
+    <h2>Quiz Complete!</h2>
+    <p>Answer this final question: Which picture did you like the most?</p>
+  </div>
+
   <script>
-    // Sample data: each picture has its own question
+    // 16 pictures with questions (you can replace URLs with your own)
     const quizData = [
       { image: "https://upload.wikimedia.org/wikipedia/commons/1/15/Red_Apple.jpg", question: "What fruit is this?" },
       { image: "https://upload.wikimedia.org/wikipedia/commons/8/88/Banana-Single.jpg", question: "Which fruit is long and yellow?" },
       { image: "https://upload.wikimedia.org/wikipedia/commons/c/c4/Orange-Fruit-Pieces.jpg", question: "What citrus fruit is this?" },
       { image: "https://upload.wikimedia.org/wikipedia/commons/9/9b/Strawberry_on_white_background.jpg", question: "Name this small red fruit." },
-      { image: "https://upload.wikimedia.org/wikipedia/commons/f/f7/Pineapple_and_cross_section.jpg", question: "Which tropical fruit is this?" }
+      { image: "https://upload.wikimedia.org/wikipedia/commons/f/f7/Pineapple_and_cross_section.jpg", question: "Which tropical fruit is this?" },
+      { image: "https://upload.wikimedia.org/wikipedia/commons/2/2e/Tomato_je.jpg", question: "What red vegetable is this?" },
+      { image: "https://upload.wikimedia.org/wikipedia/commons/4/40/Cucumber.jpg", question: "Name this green vegetable." },
+      { image: "https://upload.wikimedia.org/wikipedia/commons/3/36/Carrot_on_white_background.jpg", question: "What orange vegetable is this?" },
+      { image: "https://upload.wikimedia.org/wikipedia/commons/b/bb/Blueberry.jpg", question: "Which small blue fruit is this?" },
+      { image: "https://upload.wikimedia.org/wikipedia/commons/5/55/Lemon.jpg", question: "Name this yellow citrus fruit." },
+      { image: "https://upload.wikimedia.org/wikipedia/commons/3/31/Kiwi_aka.jpg", question: "Which fuzzy brown fruit is this?" },
+      { image: "https://upload.wikimedia.org/wikipedia/commons/0/09/Watermelon.jpg", question: "Which large green fruit has red flesh inside?" },
+      { image: "https://upload.wikimedia.org/wikipedia/commons/7/73/Grape_bunch.jpg", question: "Which fruit grows in bunches on vines?" },
+      { image: "https://upload.wikimedia.org/wikipedia/commons/3/33/Avocado_halves.jpg", question: "Which green fruit has a large seed inside?" },
+      { image: "https://upload.wikimedia.org/wikipedia/commons/6/6b/Mango.jpg", question: "Name this tropical fruit that is sweet and yellow inside." },
+      { image: "https://upload.wikimedia.org/wikipedia/commons/1/13/Pear.jpg", question: "Which fruit is shaped like a teardrop?" }
     ];
 
     let currentIndex = 0;
+    let shuffledData = [];
+
+    // Shuffle the quizData for randomness
+    function shuffleArray(array) {
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
 
     function showPicture(index) {
+      if (index >= shuffledData.length) {
+        document.getElementById("quizImage").style.display = "none";
+        document.getElementById("question").style.display = "none";
+        document.getElementById("summary").style.display = "block";
+        return;
+      }
       const quizImage = document.getElementById("quizImage");
       const question = document.getElementById("question");
-      quizImage.src = quizData[index].image;
-      question.textContent = quizData[index].question;
+      quizImage.src = shuffledData[index].image;
+      question.textContent = shuffledData[index].question;
     }
 
     function nextPicture() {
       currentIndex++;
-      if (currentIndex >= quizData.length) {
-        currentIndex = 0; // loop back to first picture
-      }
       showPicture(currentIndex);
     }
 
-    // Show first picture on page load
+    // Start the quiz
+    shuffledData = shuffleArray(quizData);
     showPicture(currentIndex);
+
   </script>
 
 </body>
