@@ -111,7 +111,6 @@ const qrCode = document.getElementById("qrCode");
 function loadImage() {
   grid.innerHTML = "";
 
-  // Control buttons and messages
   backBtn.disabled = current === 0;
   nextBtn.disabled = current === pictures.length - 1;
   backBtn.style.opacity = backBtn.disabled ? "0.5" : "1";
@@ -119,12 +118,8 @@ function loadImage() {
   revealBtn.style.display = "inline-block";
   result.textContent = normalMessage;
 
-  // Show QR code only on last picture
-  if (current === pictures.length - 1) {
-    qrCode.style.display = "block";
-  } else {
-    qrCode.style.display = "none";
-  }
+  // Always hide QR code until reveal is pressed
+  qrCode.style.display = "none";
 
   const gridSizePx = grid.offsetWidth;
   const tileSize = gridSizePx / GRID_SIZE;
@@ -157,6 +152,11 @@ function checkComplete() {
 function revealAll() {
   document.querySelectorAll(".tile").forEach(t => t.classList.remove("hidden"));
   result.textContent = `🎉 ${pictures[current].name}`;
+
+  // Show QR code only if last picture
+  if (current === pictures.length - 1) {
+    qrCode.style.display = "block";
+  }
 }
 
 function nextImage() {
