@@ -1,21 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
 <meta charset="UTF-8">
 <title>宗教图片猜谜游戏</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-  body { font-family: Arial, sans-serif; text-align: center; background: #00008B; padding: 20px; }
-  h1 { color: #ADD8E6; margin-bottom: 10px; }
-  .grid { display: grid; grid-template-columns: repeat(5, 1fr); width: 480px; height: 480px; margin: 20px auto; gap: 3px; }
-  .tile { background-size: 480px 480px; background-color: #ADD8E6; cursor: pointer; }
+  body { 
+    font-family: Arial, sans-serif; 
+    text-align: center; 
+    background: #00008B; /* Dark Blue background */ 
+    padding: 20px; 
+    color: #ADD8E6; /* Light Blue text */
+  }
+  h1 { 
+    color: #ADD8E6; 
+    margin-bottom: 10px; 
+  }
+  .grid { 
+    display: grid; 
+    grid-template-columns: repeat(5, 1fr); 
+    width: 480px; 
+    height: 480px; 
+    margin: 20px auto; 
+    gap: 3px; 
+  }
+  .tile { 
+    background-size: 480px 480px; 
+    background-color: #ADD8E6; 
+    cursor: pointer; 
+  }
   .hidden { background-image: none !important; }
   .revealed { pointer-events: none; }
-  button { padding: 8px 14px; margin: 6px; background: #ADD8E6; color: white; border: none; cursor: pointer; border-radius: 4px; }
+  button { 
+    padding: 8px 14px; 
+    margin: 6px; 
+    background: #ADD8E6; 
+    color: #00008B; 
+    border: none; 
+    cursor: pointer; 
+    border-radius: 4px; 
+  }
   button:hover { opacity: 0.9; }
   button:disabled { opacity: 0.5; cursor: not-allowed; }
   #result { margin-top: 10px; font-weight: bold; color: #ADD8E6; }
-  @media (max-width: 600px) { .grid { width: 90vw; height: 90vw; } .tile { background-size: 90vw 90vw; } }
+
+  .qr-code {
+    margin-top: 20px;
+    text-align: center;
+    color: #ADD8E6;
+  }
+  .qr-code img {
+    width: 150px;
+    height: 150px;
+    border-radius: 8px;
+    border: 2px solid #fff;
+  }
+
+  @media (max-width: 600px) { 
+    .grid { width: 90vw; height: 90vw; } 
+    .tile { background-size: 90vw 90vw; } 
+  }
 </style>
 </head>
 <body>
@@ -27,6 +71,12 @@
 
 <div>
   <button id="revealBtn" onclick="revealAll()">全部显示</button>
+</div>
+
+<!-- QR Code section (hidden by default) -->
+<div class="qr-code" id="qrCode" style="display:none;">
+  <p>扫描二维码报名咖啡聚会：</p>
+  <img src="coffee_qr.png" alt="Coffee Chat QR Code">
 </div>
 
 <div>
@@ -42,7 +92,7 @@ const pictures = [
   { src: "taichi.jpg", name: "你有练过这种武术吗？" },
   { src: "love.jpg", name: "谈谈你对“爱”的看法。" },
   { src: "universe.jpg", name: "你认为宇宙是由某个人或力量创造的吗？" },
-  { src: "invite.png", name: "我们将举办 咖啡聚会，一起聊聊关于信仰的问题。如果你有兴趣，请扫描下方二维码报名参加。" },
+  { src: "invite.png", name: "我们将举办咖啡聚会，一起聊聊关于信仰的问题。如果你有兴趣，请扫描下方二维码报名参加。" },
 ];
 
 const GRID_SIZE = 5;
@@ -56,6 +106,7 @@ const result = document.getElementById("result");
 const revealBtn = document.getElementById("revealBtn");
 const backBtn = document.getElementById("backBtn");
 const nextBtn = document.getElementById("nextBtn");
+const qrCode = document.getElementById("qrCode");
 
 function loadImage() {
   grid.innerHTML = "";
@@ -67,6 +118,13 @@ function loadImage() {
   nextBtn.style.opacity = nextBtn.disabled ? "0.5" : "1";
   revealBtn.style.display = "inline-block";
   result.textContent = normalMessage;
+
+  // Show QR code only on last picture
+  if (current === pictures.length - 1) {
+    qrCode.style.display = "block";
+  } else {
+    qrCode.style.display = "none";
+  }
 
   const gridSizePx = grid.offsetWidth;
   const tileSize = gridSizePx / GRID_SIZE;
