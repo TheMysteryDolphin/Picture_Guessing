@@ -7,7 +7,7 @@
 <style>
   body { font-family: Arial, sans-serif; text-align: center; background: #00008B; padding: 20px; }
   h1 { color: #ADD8E6; margin-bottom: 10px; }
-  .grid { display: grid; grid-template-columns: repeat(4, 1fr); width: 480px; height: 480px; margin: 20px auto; gap: 3px; }
+  .grid { display: grid; grid-template-columns: repeat(5, 1fr); width: 480px; height: 480px; margin: 20px auto; gap: 3px; }
   .tile { background-size: 480px 480px; background-color: #ADD8E6; cursor: pointer; }
   .hidden { background-image: none !important; }
   .revealed { pointer-events: none; }
@@ -45,7 +45,7 @@ const pictures = [
   { src: "invite.png", name: "我们将举办 咖啡聚会，一起聊聊关于信仰的问题。如果你有兴趣，请扫描下方二维码报名参加。" },
 ];
 
-const GRID_SIZE = 4;
+const GRID_SIZE = 5;
 const TILE_COUNT = GRID_SIZE * GRID_SIZE;
 
 const normalMessage = "Click tiles to reveal the picture";
