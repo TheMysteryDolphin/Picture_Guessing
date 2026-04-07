@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>🧧 CNY Picture Guessing Game</title>
+<title>宗教图片猜谜游戏</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   body { font-family: Arial, sans-serif; text-align: center; background: #fff3e0; padding: 20px; }
@@ -20,35 +20,32 @@
 </head>
 <body>
 
-<h1>🧧 Guess the CNY Picture 🧧</h1>
-<p>Click tiles to reveal the picture.</p>
+<h1>图片猜猜看</h1>
+<p>点击方块揭开图片</p>
 
 <div class="grid" id="grid"></div>
 
 <div>
-  <button id="revealBtn" onclick="revealAll()">Reveal All</button>
+  <button id="revealBtn" onclick="revealAll()">全部显示</button>
 </div>
 
 <div>
-  <button id="backBtn" onclick="prevImage()">⬅ Back</button>
-  <button id="nextBtn" onclick="nextImage()">Next ➡</button>
+  <button id="backBtn" onclick="prevImage()">⬅ 返回 </button>
+  <button id="nextBtn" onclick="nextImage()">继续 ➡</button>
 </div>
 
 <p id="result"></p>
 
 <script>
 const pictures = [
-  { src: "orange.jpg", name: "🍊 Orange / 橙子" },
-  { src: "angbao.jpg", name: "🧧 Ang Bao / 红包" },
-  { src: "cny-goodies.jpg", name: "🍪 CNY Goodies / 年饼" },
-  { src: "yusheng.jpg", name: "🥗 Yu Sheng / 鱼生" },
-  { src: "chunlian.jpg", name: "🧾 Chun Lian / 春联" },
-  { src: "traditional-costume.jpg", name: "👘 Traditional Costume / 传统服装" },
-  { src: "reunion-dinner.jpg", name: "🍽️ Reunion Dinner / 团圆饭" }
-  // last game / prize removed
+  { src: "yoga.jpg", name: "你认为这个活动属于哪个宗教？" },
+  { src: "taichi.jpg", name: "你有练过这种武术吗？" },
+  { src: "love.jpg", name: "谈谈你对“爱”的看法。" },
+  { src: "universe.jpg", name: "你认为宇宙是由某个人或力量创造的吗？" },
+  { src: "invite.jpg", name: "我们将举办 咖啡聚会，一起聊聊关于信仰的问题。如果你有兴趣，请扫描下方二维码报名参加。" },
 ];
 
-const GRID_SIZE = 6;
+const GRID_SIZE = 4;
 const TILE_COUNT = GRID_SIZE * GRID_SIZE;
 
 const normalMessage = "Click tiles to reveal the picture";
